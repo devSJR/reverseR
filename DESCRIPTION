@@ -1,0 +1,14 @@
+Package: reverseR
+Type: Package
+LazyLoad: no
+LazyData: yes
+Title: Linear Regression Stability to Significance Reversal
+Version: 0.1
+Date: 2017-05-24
+Author: Andrej-Nikolai Spiess <a.spiess@uke.uni-hamburg.de>
+        Michal Burdukiewicz <michalburdukiewicz@gmail.com>        
+Maintainer: Andrej-Nikolai Spiess <a.spiess@uke.uni-hamburg.de>
+Description: Tests linear regressions for significance reversal through leave-one(multiple)-out.
+License: GPL (>= 2)
+Depends: R (>= 2.13.0)
+NeedsCompilation: no

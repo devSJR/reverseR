@@ -1,0 +1,26 @@
+## exports
+export(
+  lmExact,
+  lmInfl,
+  lmPlot,
+  pvalPlot,
+  inflPlot,
+  slsePlot,
+  stability,
+  lmMult,
+  multPlot
+)
+
+## imports
+importFrom("graphics", "abline", "grid", "legend", "par", "plot", "points",
+           "axTicks", "lines", "segments", "barplot")
+importFrom("stats", "coef", "lm", "optim", "residuals", "rnorm", "influence.measures",
+           "cor", "na.omit", "predict", "pt", "qt", "model.frame", "dt", "rt",
+           "df.residual", "integrate")
+importFrom("utils", "data")
+importFrom("grDevices", "rainbow")
+
+## S3 methods
+
+
+
