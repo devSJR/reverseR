@@ -38,4 +38,4 @@ GRID <- GRID[!is.na(GRID$cook.d), ]
 plot(GRID$cook.d, GRID$dP, pch = 16, cex = 0.5)
 abline(v = 4/n, col = "darkred", lwd = 2)
 abline(v = 3 * mean(GRID$cook.d, na.rm = TRUE), col = "darkred", lwd = 2)
-
+plot(GRID$leverage, GRID$dP, pch = 16, cex = 0.5)
