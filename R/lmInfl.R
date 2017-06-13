@@ -43,10 +43,9 @@ lmInfl <- function(model, alpha = 0.05, verbose = TRUE, ...) {
   deltaSE <- abs(SE - SE.old)
   
   ## return extended influence matrix 
-  inflMat <- cbind(slope = Coef[2, ], Inter = Coef[1, ], 
-                   dSlope = deltaSlope, dInter = deltaInter, INFL, 
-                   leverage = INFL[, 6]/(1 - INFL[, 6]), looP = PVAL.loo, 
-                   dP = deltaP, SE = SE, dSE = deltaSE)
+  inflMat <- cbind(Slope = Coef[2, ], Inter = Coef[1, ], 
+                   dSlope = deltaSlope, dInter = deltaInter, 
+                   INFL, looP = PVAL.loo, dP = deltaP, SE = SE, dSE = deltaSE)
   rownames(inflMat) <- 1:length(X)
   
   ## select all influencers 
@@ -90,22 +89,18 @@ lmPlot <- function(infl, ...) {
   plot(X, Y, pch = 16, xlab = colnames(DATA)[2], ylab = colnames(DATA)[1], ...)
   grid()
   
-  ## define colors
-  COL <- rainbow(length(infl$sel))
-  CEX <- seq(from = 2, to = 1, length.out = length(infl$sel))
-  
   ## add color/size for influencers
   points(X[infl$sel], Y[infl$sel], pch = 16, cex = 1.2, col = "red3", ...)
-  points(X[infl$sel], Y[infl$sel], pch = 16, cex = CEX, col = COL, ...)
-  
-  ## original model regression line
-  abline(infl$origModel, lwd = 2, col = "black", ...)
   
   ## LOO-models regression line
-  if (length(infl$finalModels) > 0) {
-    for (i in 1:length(infl$finalModels))
-    abline(infl$finalModels[[i]], lwd = 2, col = COL[i], ...)
+  if (length(infl$sel) > 0) {
+    for (i in infl$sel) {
+      abline(infl$finalModels[[i]], lwd = 1, col = "red3", ...)
+    }
   }
+  
+  ## original model regression line
+  abline(infl$origModel, lwd = 3, col = "black", ...)
 }
 
 pvalPlot <- function(infl, ...) {
@@ -118,8 +113,8 @@ pvalPlot <- function(infl, ...) {
   
   ## plot p-values
   par(mar = c(5, 5, 4, 2))
-  plot(infl$origModel$model[, 2],  looP, pch = 16, type = "o", las = 0, 
-       xlab = colnames(infl$origModel$model)[2], ylab = "P-value", 
+  plot(1:length(looP), looP, pch = 16, type = "o", las = 0, 
+       xlab = "Index", ylab = "P-value", 
        log = "y", ylim = c(0.75 * min(looP, na.rm = TRUE), 1.25 * max(looP, na.rm = TRUE)), 
        las = 1, ...)
   grid()
@@ -127,59 +122,64 @@ pvalPlot <- function(infl, ...) {
   ## add full model p-value and alpha border
   abline(h = infl$origP, col = "blue", lwd = 2, ...)
   abline(h = infl$alpha, col = "red3", lwd = 2, ...)
-  legend("top", c("Original model p-value", "Selected alpha"), 
-         fill = c("blue", "red3"), horiz = TRUE, inset = -0.25, xpd = TRUE, ...)
+  legend("top", c("Original model P-value", "Selected alpha"), 
+         fill = c("blue", "red3"), horiz = TRUE, inset =-0.12, xpd = TRUE, ...)
 }
 
 inflPlot <- function(infl, ...) {
   
   ## check for correct class
   if (class(infl) != "influencers") stop("object is not a result of 'lmInfl' !")
-  
+ 
   ## extract influence values
   df_a <- infl$infl[, "dfb.a"]
   df_fit <- infl$infl[, "dffit"]
   cov_r <- infl$infl[, "cov.r"]
   cook_D <- infl$infl[, "cook.d"]
-  looP <- infl$infl[, "looP"]
-  
-  ## define minimum y-axis plot value
-  if (min(looP, na.rm = TRUE) <= infl$alpha) MIN <- min(looP, na.rm = TRUE) 
-    else MIN <- infl$alpha
+  lev <-  infl$infl[, "hat"]
+  dP <- infl$infl[, "dP"]
   
   ## define sample size
   N <- nrow(infl$origModel$model)
   
-  ## plot influence values vs. p-value
-  par(mfrow = c(2, 2))
+  ## plot influence values vs. delta p-value
+  par(mfrow = c(2, 3))
   par(mar = (c(5, 4, 1, 1)))
-  plot(df_a, looP, pch = 16, xlab = "dfbeta slope", ylab = "p-value", 
-       las = 1, log = "y", ylim = c(MIN, 1), ...)
-  points(df_a[infl$sel], looP[infl$sel], pch = 16, col = "red", ...)
-  abline(h = infl$alpha, col = "blue", lwd = 2, ...)
+  
+  # dfslope
+  plot(df_a, dP, pch = 16, xlab = "dfbeta slope", ylab = "delta P-value", 
+       las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
+  points(df_a[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
   abline(v = 2/sqrt(N), col = "darkgreen", lwd = 2, ...) ## 2/sqrt(n)
   grid()
   
-  plot(df_fit, looP, pch = 16, xlab = "dffits", ylab = "p-value", 
-       las = 1, log = "y", ylim = c(MIN, 1), ...)
-  points(df_fit[infl$sel], looP[infl$sel], pch = 16, col = "red", ...)
-  abline(h = infl$alpha, col = "blue", lwd = 2, ...)
+  # dffits
+  plot(df_fit, dP, pch = 16, xlab = "dffits", ylab = "delta P-value", 
+       las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
+  points(df_fit[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
   abline(v = 2 * sqrt(2/N), col = "darkgreen", lwd = 2, ...)  ## 2*sqrt(2/n)
   grid()
   
-  plot(abs(cov_r - 1), looP, pch = 16, xlab = "covratio", ylab = "p-value", 
-       las = 1, log = "y", ylim = c(MIN, 1), ...)
-  points(abs(cov_r - 1)[infl$sel], looP[infl$sel], pch = 16, col = "red", ...)
-  abline(h = infl$alpha, col = "blue", lwd = 2, ...)
+  # covratio
+  plot(abs(cov_r - 1), dP, pch = 16, xlab = "Covratio", ylab = "delta P-value", 
+       las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
+  points(abs(cov_r - 1)[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
   abline(v = 3 * (2/N), col = "darkgreen", lwd = 2, ...)  ## 3*sqrt(2/n)
   grid()
   
-  plot(cook_D, looP, pch = 16, xlab = "CookD", ylab = "p-value", 
-       las = 1, log = "y", ylim = c(MIN, 1), ...)
-  points(cook_D[infl$sel], looP[infl$sel], pch = 16, col = "red", ...)
-  abline(h = infl$alpha, col = "blue", lwd = 2, ...)
+  # Cook's D
+  plot(cook_D, dP, pch = 16, xlab = "CookD", ylab = "delta P-value", 
+       las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
+  points(cook_D[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
   abline(v = 4/N, col = "darkgreen", lwd = 2, ...)
   abline(v = 3 * mean(cook_D, na.rm = TRUE), col = "darkgreen", lwd = 2, ...)
+  grid()
+  
+  # leverage
+  plot(lev, dP, pch = 16, xlab = "Leverage", ylab = "delta P-value", 
+       las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
+  points(lev[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
+  abline(v = 2 * mean(lev, na.rm = TRUE), col = "darkgreen", lwd = 2, ...)
   grid()
 }
 
@@ -193,7 +193,7 @@ slsePlot <- function(infl, ...) {
   origSE <- summary(infl$origModel)$coefficients[2, 2]
   
   ## extract LOO-slopes and LOO-SEs
-  Slope <- infl$infl[, "slope"]
+  Slope <- infl$infl[, "Slope"]
   SE <- infl$infl[, "SE"]
   
   ## plot both 

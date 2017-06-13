@@ -69,6 +69,6 @@ multPlot <- function(mult, ...) {
   ## plot in 'stripchart' style
   X <- X + rnorm(length(X), 0, 0.05)
   plot(X, Y, pch = 16, cex = 0.2, col = ifelse(Y <= alpha, "red3", "black"),
-       las = 1, xlab = "left-out samples", ylab = "p-value", cex.lab = 1.5, ...)
+       las = 1, xlab = "Left-out samples", ylab = "P-value", cex.lab = 1.5, ...)
 }
 

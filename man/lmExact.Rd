@@ -57,13 +57,13 @@ http://stats.stackexchange.com/questions/15011/generate-a-random-variable-with-a
 }
 
 \examples{
-## no replicates, intercept = 3, slope = 0.2, sigma = 2, n = 20.
+## No replicates, intercept = 3, slope = 0.2, sigma = 2, n = 20.
 res1 <- lmExact(x = 1:20, ny = 1, intercept = 3, slope = 2, error = 2)
 
-## same as above, but with 3 replicates, sigma = 1,  n = 20.
+## Ssame as above, but with 3 replicates, sigma = 1,  n = 20.
 res2 <- lmExact(x = 1:20, ny = 3, intercept = 3, slope = 2, error = 1)
 
-## no replicates, intercept = 2 and p-value = 0.025, sigma = 3, n = 50.
+## No replicates, intercept = 2 and p-value = 0.025, sigma = 3, n = 50.
 ## => slope = 0.063
 res3 <- lmExact(x = 1:50, ny = 1, intercept = 2, pval = 0.025, error = 3)
 
@@ -71,7 +71,7 @@ res3 <- lmExact(x = 1:50, ny = 1, intercept = 2, pval = 0.025, error = 3)
 ## => slope = 0.117
 res4 <- lmExact(x = 1:10, ny = 5, intercept = 1, rsq = 0.85, error = 2)
 
-## heteroscedastic (magnitude-dependent) noise.
+## Heteroscedastic (magnitude-dependent) noise.
 error <- sapply(1:20, function(x) rnorm(3, 0, x/10))
 res5 <- lmExact(x = 1:20, ny = 3, intercept = 1, slope = 0.2,
                 error = error)

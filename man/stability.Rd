@@ -22,7 +22,7 @@ stability(x, plot = TRUE, ...)
 For results of \code{\link{lmInfl}}:\cr
 A [0, 1]-bounded stability measure \eqn{S = 1-\frac{n}{N}}, with \eqn{n} = number of influencers (significance reversers) and \eqn{N} = total number of response values.\cr\cr
 For results of \code{\link{lmMult}}:\cr
-The percentage of all 1...\code{max} resamples that did *NOT* result in significance reversal.\cr\cr
+For each 1...\code{max}, the percentage of all resamples that did *NOT* result in significance reversal.\cr\cr
 }
 
 \value{

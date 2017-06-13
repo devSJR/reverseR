@@ -1,3 +1,14 @@
+## counter function for 'inflSim'
+counter <- function (i) 
+{
+  if (i%%10 == 0) 
+    cat(i)
+  else cat(".")
+  if (i%%50 == 0) 
+    cat("\n")
+  flush.console()
+}
+
 ## define optimizing function
 optFct <- function(par, x, y, iter, alpha) {
   y[iter] <- par

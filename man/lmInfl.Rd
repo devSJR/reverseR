@@ -24,14 +24,14 @@ The algorithm\cr
 1) calculates the \emph{p}-value of the full model (all points),\cr
 2) calculates a LOO-\emph{p}-value for each point removed,\cr
 3) checks for "significance reversal" in all data points and\cr
-4) returns all models as well as classical \code{\link{influence.measures}} with LOO-\emph{p}-values, slopes and standard errors attached.\cr
+4) returns all models as well as classical \code{\link{influence.measures}} with LOO-\emph{p}-values, \eqn{\Delta}\emph{p}-values, slopes and standard errors attached.\cr
 }
 
 \value{
 A list with the following items:\cr
 \item{origModel}{the original model with all data points.} 
 \item{finalModels}{a list of final models with the influencer(s) removed.}
-\item{infl}{a matrix with the classical \code{\link{influence.measures}}, the leverages, LOO-\emph{p}-values, LOO-slopes/intercepts, LOO-standard errors and their deltas to the original model values attached.}
+\item{infl}{a matrix with the classical \code{\link{influence.measures}}, the leverages, LOO-\emph{p}-values, LOO-slopes/intercepts, LOO-standard errors and their \eqn{\Delta}'s to the original model values attached.}
 \item{sel}{a vector with the influencers' indices.}
 \item{alpha}{the selected \eqn{\alpha}-level.}
 \item{origP}{the original model's \emph{p}-value.}

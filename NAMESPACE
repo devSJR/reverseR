@@ -8,7 +8,8 @@ export(
   slsePlot,
   stability,
   lmMult,
-  multPlot
+  multPlot,
+  simInfl
 )
 
 ## imports
@@ -17,7 +18,7 @@ importFrom("graphics", "abline", "grid", "legend", "par", "plot", "points",
 importFrom("stats", "coef", "lm", "optim", "residuals", "rnorm", "influence.measures",
            "cor", "na.omit", "predict", "pt", "qt", "model.frame", "dt", "rt",
            "df.residual", "integrate")
-importFrom("utils", "data")
+importFrom("utils", "data", "flush.console")
 importFrom("grDevices", "rainbow")
 
 ## S3 methods
