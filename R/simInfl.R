@@ -8,7 +8,7 @@ simInfl <- function(
   ## create combinations and result grid
   GRID <- expand.grid(1:nrev, slope, error)
   colnames(GRID) <- c("nrev", "slope", "error")
-  MAT <- matrix(NA, nrow = nrow(GRID), ncol = 16)
+  MAT <- matrix(NA, nrow = nrow(GRID), ncol = 17)
   GRID <- cbind(GRID, MAT)
   
   ## initialize loop counter & reversal counter
@@ -29,7 +29,7 @@ simInfl <- function(
       counter(isRev)
       GRID[i, 4] <- seeds
       GRID[i, 5] <- RES$origP
-      GRID[i, 6:19] <- RES$infl[RES$sel[1], ]
+      GRID[i, 6:20] <- RES$infl[RES$sel[1], ]
       isRev <- isRev + 1
       i <- i + 1
     }
@@ -37,6 +37,6 @@ simInfl <- function(
   }
  
   ## create column names and return
-  colnames(GRID)[4:19] <- c("seed", "origP", colnames(RES$infl))
+  colnames(GRID)[4:20] <- c("seed", "origP", colnames(RES$infl))
   return(GRID)
 }

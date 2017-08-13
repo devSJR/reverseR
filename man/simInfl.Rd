@@ -35,7 +35,7 @@ Andrej-Nikolai Spiess
 \examples{
 \dontrun{
 ## Example with slight slope and 1000 reversals.
-res <- inflSim(x = 1:10, slope = 0.02, error = 0.05, nrev = 1000)
+res <- simInfl(x = 1:10, slope = 0.02, error = 0.05, nrev = 1000)
 
 ## Plot Cook's D versus delta-P values
 ## and insert common cut-offs.

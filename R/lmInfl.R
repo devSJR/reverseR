@@ -28,7 +28,7 @@ lmInfl <- function(model, alpha = 0.05, verbose = TRUE, ...) {
   modList <- vector("list", length = length(X))
     
   for (i in 1:length(X)) {
-    modList[[i]] <- lm(Y[-i] ~ X[-i], weights = wts, ...)
+    modList[[i]] <- lm(Y[-i] ~ X[-i], weights = wts[-i], ...)
   }
     
   ## get coefficients, p-values, slopes and s.e.(slope)
@@ -41,11 +41,14 @@ lmInfl <- function(model, alpha = 0.05, verbose = TRUE, ...) {
   deltaSlope <- abs(Slope - SLOPE.old)
   deltaInter <- abs(Inter - INTER.old)
   deltaSE <- abs(SE - SE.old)
+  RSQ.loo <- sapply(modList, function(x)  summary(x)$r.squared)
   
   ## return extended influence matrix 
-  inflMat <- cbind(Slope = Coef[2, ], Inter = Coef[1, ], 
-                   dSlope = deltaSlope, dInter = deltaInter, 
-                   INFL, looP = PVAL.loo, dP = deltaP, SE = SE, dSE = deltaSE)
+  colnames(INFL)[1] <- "dfb.Inter"
+  colnames(INFL)[2] <- "dfb.Slope"
+  inflMat <- cbind(Idx = 1:nrow(DATA), DATA[, c(2, 1)], Slope = Coef[2, ], Inter = Coef[1, ], 
+                   dSlope = deltaSlope, dInter = deltaInter, INFL, looP = PVAL.loo, 
+                   dP = deltaP, SE = SE, dSE = deltaSE, Rsq = RSQ.loo)
   rownames(inflMat) <- 1:length(X)
   
   ## select all influencers 
@@ -90,7 +93,7 @@ lmPlot <- function(infl, ...) {
   grid()
   
   ## add color/size for influencers
-  points(X[infl$sel], Y[infl$sel], pch = 16, cex = 1.2, col = "red3", ...)
+  points(X[infl$sel], Y[infl$sel], pch = 16, cex = 2, col = "red3", ...)
   
   ## LOO-models regression line
   if (length(infl$sel) > 0) {
@@ -110,6 +113,7 @@ pvalPlot <- function(infl, ...) {
   
   ## extract leave-one-out p-values
   looP <- infl$infl[, "looP"]
+  sel <- infl$sel
   
   ## plot p-values
   par(mar = c(5, 5, 4, 2))
@@ -117,6 +121,8 @@ pvalPlot <- function(infl, ...) {
        xlab = "Index", ylab = "P-value", 
        log = "y", ylim = c(0.75 * min(looP, na.rm = TRUE), 1.25 * max(looP, na.rm = TRUE)), 
        las = 1, ...)
+  
+  points(sel, looP[sel], pch = 16, col = "red3", cex = 2)
   grid()
   
   ## add full model p-value and alpha border
@@ -132,7 +138,7 @@ inflPlot <- function(infl, ...) {
   if (class(infl) != "influencers") stop("object is not a result of 'lmInfl' !")
  
   ## extract influence values
-  df_a <- infl$infl[, "dfb.a"]
+  df_a <- infl$infl[, "dfb.Slope"]
   df_fit <- infl$infl[, "dffit"]
   cov_r <- infl$infl[, "cov.r"]
   cook_D <- infl$infl[, "cook.d"]
@@ -149,28 +155,28 @@ inflPlot <- function(infl, ...) {
   # dfslope
   plot(df_a, dP, pch = 16, xlab = "dfbeta slope", ylab = "delta P-value", 
        las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
-  points(df_a[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
+  points(df_a[infl$sel], dP[infl$sel], pch = 16, col = "red3", cex = 2, ...)
   abline(v = 2/sqrt(N), col = "darkgreen", lwd = 2, ...) ## 2/sqrt(n)
   grid()
   
   # dffits
   plot(df_fit, dP, pch = 16, xlab = "dffits", ylab = "delta P-value", 
        las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
-  points(df_fit[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
+  points(df_fit[infl$sel], dP[infl$sel], pch = 16, col = "red3", cex = 2, ...)
   abline(v = 2 * sqrt(2/N), col = "darkgreen", lwd = 2, ...)  ## 2*sqrt(2/n)
   grid()
   
   # covratio
   plot(abs(cov_r - 1), dP, pch = 16, xlab = "Covratio", ylab = "delta P-value", 
        las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
-  points(abs(cov_r - 1)[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
+  points(abs(cov_r - 1)[infl$sel], dP[infl$sel], pch = 16, col = "red3", cex = 2, ...)
   abline(v = 3 * (2/N), col = "darkgreen", lwd = 2, ...)  ## 3*sqrt(2/n)
   grid()
   
   # Cook's D
   plot(cook_D, dP, pch = 16, xlab = "CookD", ylab = "delta P-value", 
        las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
-  points(cook_D[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
+  points(cook_D[infl$sel], dP[infl$sel], pch = 16, col = "red3", cex = 2, ...)
   abline(v = 4/N, col = "darkgreen", lwd = 2, ...)
   abline(v = 3 * mean(cook_D, na.rm = TRUE), col = "darkgreen", lwd = 2, ...)
   grid()
@@ -178,7 +184,7 @@ inflPlot <- function(infl, ...) {
   # leverage
   plot(lev, dP, pch = 16, xlab = "Leverage", ylab = "delta P-value", 
        las = 1, ylim = c(0, max(dP, na.rm = TRUE)), ...)
-  points(lev[infl$sel], dP[infl$sel], pch = 16, col = "red3", ...)
+  points(lev[infl$sel], dP[infl$sel], pch = 16, col = "red3", cex = 2, ...)
   abline(v = 2 * mean(lev, na.rm = TRUE), col = "darkgreen", lwd = 2, ...)
   grid()
 }
@@ -200,7 +206,7 @@ slsePlot <- function(infl, ...) {
   plot(Slope, SE, type = "p", pch = 16, xlab = "Slope",
        ylab = "SE", las = 1)
   points(Slope[infl$sel], SE[infl$sel], type = "p", 
-         cex = 1.2, pch = 16, col = "red3")
+         cex = 2, pch = 16, col = "red3")
   grid()
   
   ## insert t-border for p = alpha

@@ -9,7 +9,8 @@ export(
   stability,
   lmMult,
   multPlot,
-  simInfl
+  simInfl,
+  shinyInfl
 )
 
 ## imports
@@ -20,7 +21,7 @@ importFrom("stats", "coef", "lm", "optim", "residuals", "rnorm", "influence.meas
            "df.residual", "integrate")
 importFrom("utils", "data", "flush.console")
 importFrom("grDevices", "rainbow")
-
+import(shiny)
 ## S3 methods
 
 

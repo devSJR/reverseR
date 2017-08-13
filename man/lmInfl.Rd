@@ -31,7 +31,7 @@ The algorithm\cr
 A list with the following items:\cr
 \item{origModel}{the original model with all data points.} 
 \item{finalModels}{a list of final models with the influencer(s) removed.}
-\item{infl}{a matrix with the classical \code{\link{influence.measures}}, the leverages, LOO-\emph{p}-values, LOO-slopes/intercepts, LOO-standard errors and their \eqn{\Delta}'s to the original model values attached.}
+\item{infl}{a matrix with the original data, the classical \code{\link{influence.measures}}, the leverages, LOO-\emph{p}-values, LOO-slopes/intercepts and their \eqn{\Delta}'s, LOO-standard errors and \eqn{R^2}s.}
 \item{sel}{a vector with the influencers' indices.}
 \item{alpha}{the selected \eqn{\alpha}-level.}
 \item{origP}{the original model's \emph{p}-value.}
@@ -43,7 +43,7 @@ Andrej-Nikolai Spiess
 }   
 
 \examples{
-## Example with single influencers and insignificant model (p = 0.115).
+## Example #1 with single influencers and insignificant model (p = 0.115).
 ## Removal of #18 results in p = 0.0227!
 set.seed(123)
 a <- 1:20
@@ -56,7 +56,7 @@ inflPlot(res1)
 slsePlot(res1)
 stability(res1)
 
-## Example with multiple influencers and significant model (p = 0.0269).
+## Example #2 with multiple influencers and significant model (p = 0.0269).
 ## Removal of #2, #17, #18 or #20 result in crossing p = 0.05!
 set.seed(125)
 a <- 1:20
@@ -69,7 +69,7 @@ inflPlot(res2)
 slsePlot(res2)
 stability(res2)
 
-## Large example with top 10 influencers and significant model (p = 6.72E-8).
+## Large Example #3 with top 10 influencers and significant model (p = 6.72E-8).
 ## Not possible to achieve a crossing of alpha with any point despite of
 ## strong noise.
 set.seed(123)
@@ -80,7 +80,7 @@ res3 <- lmInfl(LM3)
 lmPlot(res3)
 stability(res3)
 
-## Example with replicates and single influencer (p = 0.114).
+## Example #4 with replicates and single influencer (p = 0.114).
 ## Removal of #58 results in p = 0.039.
 set.seed(123)
 a <- rep(1:20, each = 3)
@@ -92,6 +92,16 @@ pvalPlot(res4)
 inflPlot(res4)
 slsePlot(res4)
 stability(res4)
+
+## As Example #1, but with weights.
+## Removal of #18 results in p = 0.04747!
+set.seed(123)
+a <- 1:20
+b <- 5 + 0.08 * a + rnorm(20, 0, 1)
+LM5 <- lm(b ~ a, weights = 1:20)
+res5 <- lmInfl(LM5) 
+lmPlot(res5)
+stability(res5)
 }   
 
 \keyword{optimize}
