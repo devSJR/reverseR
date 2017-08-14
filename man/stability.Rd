@@ -5,7 +5,7 @@
 \title{Calculates stability values for results of 'lmInfl' and 'lmMult'}
 
 \description{
-This function calculates stability values for either LOO (\code{\link{lmInfl}}) or LMO  (\code{\link{lmMult}}) models .
+This function calculates stability values for either LOO (\code{\link{lmInfl}}) or LMO  (\code{\link{lmMult}}) models.
 }
 
 \usage{

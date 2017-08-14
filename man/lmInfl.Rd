@@ -15,7 +15,7 @@ lmInfl(model, alpha = 0.05, verbose = TRUE, ...)
 \arguments{
 \item{model}{the linear model of class \code{\link{lm}}.}
 \item{alpha}{the \eqn{\alpha}-level to use as the threshold border.}
-\item{verbose}{logical. If \code{TRUE}, results are dosplayed on the console.}
+\item{verbose}{logical. If \code{TRUE}, results are displayed on the console.}
 \item{...}{other arguments to \code{\link{lm}}.}
 }
 
